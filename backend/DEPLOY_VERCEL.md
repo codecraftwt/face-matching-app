@@ -36,7 +36,20 @@ In the Vercel project: **Settings** → **Environment Variables**:
 |-----------|--------------------------|--------------|
 | MONGO_URI | `mongodb+srv://...`      | Production, Preview |
 
-Use the same value as in your local `backend/.env`.
+Use the **exact same** value as in your local `backend/.env` (your MongoDB Atlas URI).
+
+**If `/health` returns `"db": "disconnected"`:**
+
+1. **Set `MONGO_URI` on Vercel**  
+   Vercel → your project → **Settings** → **Environment Variables** → add:
+   - Name: `MONGO_URI`
+   - Value: your full MongoDB Atlas URI (same as in `.env`, e.g. `mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/`)
+   - Apply to: Production (and Preview if you use it)  
+   Then **redeploy** (Deployments → … → Redeploy).
+
+2. **Allow Vercel to reach Atlas**  
+   MongoDB Atlas → your project → **Network Access** → **Add IP Address** → **Allow Access from Anywhere** (adds `0.0.0.0/0`).  
+   Vercel uses changing IPs, so Atlas must allow all IPs for the backend to connect.
 
 ## 4. Get your backend URL
 

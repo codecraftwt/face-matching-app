@@ -6,7 +6,16 @@ const MONGO_URI = process.env.MONGO_URI;
 const DB_NAME = 'face_attendance';
 
 if (MONGO_URI) {
-  mongoose.connect(MONGO_URI, { dbName: DB_NAME }).catch((err) => console.error('MongoDB connect:', err));
+  mongoose.connect(MONGO_URI, {
+    dbName: DB_NAME,
+    serverSelectionTimeoutMS: 10000,
+  }).then(() => {
+    console.log('MongoDB connected (Vercel)');
+  }).catch((err) => {
+    console.error('MongoDB connect error:', err.message);
+  });
+} else {
+  console.warn('MONGO_URI not set – add it in Vercel Project Settings → Environment Variables');
 }
 
 module.exports = app;

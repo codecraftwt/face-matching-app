@@ -14,9 +14,11 @@ app.use('/api/attendance', attendanceRoutes);
 
 app.get('/health', (req, res) => {
   const dbState = mongoose.connection.readyState;
+  const dbStatus = dbState === 1 ? 'connected' : dbState === 0 ? 'disconnected' : 'connecting';
   res.json({
     ok: true,
-    db: dbState === 1 ? 'connected' : dbState === 0 ? 'disconnected' : 'connecting',
+    db: dbStatus,
+    hint: dbState === 0 ? 'Set MONGO_URI in Vercel env vars; allow 0.0.0.0/0 in MongoDB Atlas Network Access' : undefined,
   });
 });
 
