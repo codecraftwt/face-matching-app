@@ -1,32 +1,11 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
+const app = require('./app');
 
-const employeeRoutes = require('./routes/employees');
-const attendanceRoutes = require('./routes/attendance');
-
-const app = express();
 const PORT = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-
-app.use('/api/employees', employeeRoutes);
-app.use('/api/attendance', attendanceRoutes);
-
-// All app data is stored in MongoDB (db: face_attendance, collections: employees, attendances)
 const DB_NAME = 'face_attendance';
-
-app.get('/health', (req, res) => {
-  const dbState = mongoose.connection.readyState;
-  res.json({
-    ok: true,
-    db: dbState === 1 ? 'connected' : dbState === 0 ? 'disconnected' : 'connecting',
-  });
-});
-
 const MONGO_URI = process.env.MONGO_URI;
+
 if (!MONGO_URI) {
   console.error('Missing MONGO_URI in .env');
   process.exit(1);
