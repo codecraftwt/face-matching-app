@@ -9,6 +9,21 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Wait for MongoDB to connect (needed on Vercel serverless cold start)
+const waitForDb = (maxMs = 12000) => {
+  if (mongoose.connection.readyState === 1) return Promise.resolve();
+  return new Promise((resolve) => {
+    const done = () => resolve();
+    if (mongoose.connection.readyState === 1) return done();
+    mongoose.connection.once('connected', done);
+    mongoose.connection.once('error', done);
+    setTimeout(done, maxMs);
+  });
+};
+app.use((req, res, next) => {
+  waitForDb().then(next);
+});
+
 app.use('/api/employees', employeeRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
